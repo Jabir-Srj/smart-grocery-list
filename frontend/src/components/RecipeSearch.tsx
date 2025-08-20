@@ -27,6 +27,7 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
       const randomRecipes = await recipeService.getRandomRecipes(6);
       setRecipes(randomRecipes);
     } catch (err) {
+      console.error('Failed to load recipes:', err);
       setError('Failed to load recipes. Please try again.');
     } finally {
       setLoading(false);
@@ -52,6 +53,7 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
         setError('No recipes found. Try a different search term.');
       }
     } catch (err) {
+      console.error('Failed to search recipes:', err);
       setError('Failed to search recipes. Please try again.');
     } finally {
       setLoading(false);

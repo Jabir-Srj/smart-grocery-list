@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { X, Clock, Users, ShoppingCart, List, ExternalLink } from 'lucide-react';
 import { Recipe, GroceryCategory } from '../types';
 import { recipeService } from '../services/recipeService';
@@ -22,18 +22,7 @@ export function RecipeModal({ recipeId, onClose, onAddIngredients }: RecipeModal
   const [selectedIngredients, setSelectedIngredients] = useState<Set<number>>(new Set());
   const [selectAll, setSelectAll] = useState(true);
 
-  useEffect(() => {
-    loadRecipe();
-  }, [recipeId]);
-
-  useEffect(() => {
-    // Initially select all ingredients
-    if (recipe?.ingredients) {
-      setSelectedIngredients(new Set(recipe.ingredients.map((_, index) => index)));
-    }
-  }, [recipe]);
-
-  const loadRecipe = async () => {
+  const loadRecipe = useCallback(async () => {
     setLoading(true);
     setError(null);
     
@@ -46,11 +35,23 @@ export function RecipeModal({ recipeId, onClose, onAddIngredients }: RecipeModal
         setError('Recipe not found');
       }
     } catch (err) {
+      console.error('Failed to load recipe:', err);
       setError('Failed to load recipe');
     } finally {
       setLoading(false);
     }
-  };
+  }, [recipeId]);
+
+  useEffect(() => {
+    loadRecipe();
+  }, [loadRecipe]);
+
+  useEffect(() => {
+    // Initially select all ingredients
+    if (recipe?.ingredients) {
+      setSelectedIngredients(new Set(recipe.ingredients.map((_, index) => index)));
+    }
+  }, [recipe]);
 
   const handleIngredientToggle = (index: number) => {
     const newSelected = new Set(selectedIngredients);

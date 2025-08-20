@@ -1,8 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { recipeService } from '../services/recipeService';
 
 // Mock fetch globally
 globalThis.fetch = vi.fn();
+const mockedFetch = fetch as Mock;
 
 describe('RecipeService', () => {
   beforeEach(() => {
@@ -21,7 +22,7 @@ describe('RecipeService', () => {
         ]
       };
 
-      (fetch as any).mockResolvedValueOnce({
+      mockedFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockResponse)
       });
@@ -40,7 +41,7 @@ describe('RecipeService', () => {
     it('should return empty array when no recipes found', async () => {
       const mockResponse = { meals: null };
 
-      (fetch as any).mockResolvedValueOnce({
+      mockedFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockResponse)
       });
@@ -50,7 +51,7 @@ describe('RecipeService', () => {
     });
 
     it('should handle API errors gracefully and return fallback data', async () => {
-      (fetch as any).mockRejectedValueOnce(new Error('Network error'));
+      mockedFetch.mockRejectedValueOnce(new Error('Network error'));
 
       const results = await recipeService.searchRecipes('chicken');
       expect(results.length).toBeGreaterThan(0);
@@ -80,7 +81,7 @@ describe('RecipeService', () => {
         ]
       };
 
-      (fetch as any).mockResolvedValueOnce({
+      mockedFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockResponse)
       });
@@ -105,7 +106,7 @@ describe('RecipeService', () => {
     it('should return null when recipe not found', async () => {
       const mockResponse = { meals: null };
 
-      (fetch as any).mockResolvedValueOnce({
+      mockedFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve(mockResponse)
       });
@@ -115,7 +116,7 @@ describe('RecipeService', () => {
     });
 
     it('should handle API errors gracefully and return fallback for mock IDs', async () => {
-      (fetch as any).mockRejectedValueOnce(new Error('Network error'));
+      mockedFetch.mockRejectedValueOnce(new Error('Network error'));
 
       const recipe = await recipeService.getRecipeById('mock-1');
       expect(recipe).not.toBeNull();

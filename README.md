@@ -70,6 +70,36 @@ npm run build
 
 The built files will be in the `dist` directory, ready for deployment.
 
+## 🚀 Deployment
+
+### Vercel Deployment
+
+This project is optimized for deployment on Vercel. You can deploy it in two ways:
+
+#### Option 1: Deploy from GitHub (Recommended)
+1. Push your code to GitHub
+2. Connect your GitHub repository to Vercel
+3. Vercel will automatically detect the configuration and deploy
+
+#### Option 2: Deploy using Vercel CLI
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run `vercel` in the project root
+3. Follow the prompts to deploy
+
+The project includes:
+- `vercel.json` configuration for build settings
+- Optimized build with code splitting
+- Security headers and caching rules
+- SPA routing support
+
+### Other Platforms
+
+For other deployment platforms, use the build output from `frontend/dist/`:
+
+```bash
+npm run build
+```
+
 ## 🧪 Testing
 
 Run the test suite:

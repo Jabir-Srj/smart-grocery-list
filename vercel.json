@@ -1,6 +1,6 @@
 {
   "buildCommand": null,
-  "installCommand": false,
+  "installCommand": null,
   "framework": "vite",
   "outputDirectory": "./frontend/dist"
 }

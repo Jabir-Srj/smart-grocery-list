@@ -1,0 +1,246 @@
+.grocery-item {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s;
+  margin-bottom: 8px;
+}
+
+.grocery-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.grocery-item.completed {
+  opacity: 0.7;
+  background: #f9fafb;
+}
+
+.grocery-item.editing {
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.item-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+}
+
+.completion-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.completion-button:hover {
+  border-color: #4f46e5;
+}
+
+.completion-button.completed {
+  background: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.item-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.item-name {
+  font-weight: 500;
+  color: #111827;
+  flex: 1;
+}
+
+.grocery-item.completed .item-name {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+.item-quantity {
+  font-size: 14px;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.item-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.item-category {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.item-price {
+  font-size: 14px;
+  color: #059669;
+  font-weight: 500;
+}
+
+.item-notes {
+  font-size: 14px;
+  color: #6b7280;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.action-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: transparent;
+}
+
+.action-button.edit {
+  color: #6b7280;
+}
+
+.action-button.edit:hover {
+  background: #f3f4f6;
+  color: #4f46e5;
+}
+
+.action-button.delete {
+  color: #6b7280;
+}
+
+.action-button.delete:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.action-button.save {
+  color: #059669;
+}
+
+.action-button.save:hover {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.action-button.cancel {
+  color: #6b7280;
+}
+
+.action-button.cancel:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Edit form styles */
+.edit-form {
+  flex: 1;
+}
+
+.edit-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.edit-row:last-child {
+  margin-bottom: 0;
+}
+
+.edit-input,
+.edit-select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.edit-input:focus,
+.edit-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.name-input {
+  flex: 1;
+}
+
+.quantity-input {
+  width: 80px;
+}
+
+.price-input {
+  width: 100px;
+}
+
+.category-select {
+  flex: 1;
+}
+
+.notes-input {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .item-content {
+    padding: 12px;
+  }
+  
+  .item-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .item-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .edit-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .quantity-input,
+  .price-input {
+    width: auto;
+  }
+}

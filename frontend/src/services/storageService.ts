@@ -42,11 +42,11 @@ class LocalStorageService {
         ...parsed,
         dateCreated: new Date(parsed.dateCreated),
         dateModified: new Date(parsed.dateModified),
-        items: parsed.items.map((item: any) => ({
+        items: parsed.items.map((item: Partial<GroceryItem> & { dateAdded: string; lastPurchased?: string }) => ({
           ...item,
           dateAdded: new Date(item.dateAdded),
           lastPurchased: item.lastPurchased ? new Date(item.lastPurchased) : undefined
-        }))
+        } as GroceryItem))
       };
     } catch (error) {
       console.error('Failed to load current list:', error);
@@ -123,12 +123,12 @@ class LocalStorageService {
       
       const parsed = JSON.parse(data);
       return {
-        purchases: parsed.purchases.map((item: any) => ({
+        purchases: parsed.purchases.map((item: Partial<GroceryItem> & { dateAdded: string; lastPurchased?: string }) => ({
           ...item,
           dateAdded: new Date(item.dateAdded),
           lastPurchased: item.lastPurchased ? new Date(item.lastPurchased) : undefined
-        })),
-        frequentItems: parsed.frequentItems.map((freq: any) => ({
+        } as GroceryItem)),
+        frequentItems: parsed.frequentItems.map((freq: { item: Omit<GroceryItem, 'id' | 'isCompleted' | 'dateAdded'>; frequency: number; lastPurchased: string }) => ({
           ...freq,
           lastPurchased: new Date(freq.lastPurchased)
         }))

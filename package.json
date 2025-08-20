@@ -1,0 +1,41 @@
+{
+  "name": "smart-grocery-list",
+  "version": "1.0.0",
+  "description": "A modern, intelligent grocery list application with smart categorization, budget tracking, and shopping history",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "test": "cd frontend && npm run test",
+    "test:run": "cd frontend && npm run test:run",
+    "lint": "cd frontend && npm run lint",
+    "install-deps": "cd frontend && npm install",
+    "start": "cd frontend && npm run preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jabir-Srj/smart-grocery-list.git"
+  },
+  "keywords": [
+    "grocery",
+    "shopping",
+    "list",
+    "react",
+    "typescript",
+    "budget",
+    "smart",
+    "categorization",
+    "responsive",
+    "portfolio"
+  ],
+  "author": "University Student",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Jabir-Srj/smart-grocery-list/issues"
+  },
+  "homepage": "https://github.com/Jabir-Srj/smart-grocery-list#readme",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

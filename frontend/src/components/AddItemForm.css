@@ -6,6 +6,40 @@
   margin-bottom: var(--space-lg);
 }
 
+.form-tabs {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.tab-button {
+  padding: var(--space-md) var(--space-lg);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.tab-button:hover {
+  color: var(--color-gray-800);
+  background: var(--color-gray-50);
+}
+
+.tab-button.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
 .quick-add {
   display: flex;
   gap: var(--space-md);
@@ -133,6 +167,16 @@
   .add-item-form {
     padding: var(--space-lg);
     margin-bottom: var(--space-md);
+  }
+  
+  .form-tabs {
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  
+  .tab-button {
+    justify-content: center;
+    padding: var(--space-sm) var(--space-md);
   }
   
   .form-row {

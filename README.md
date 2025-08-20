@@ -99,6 +99,13 @@ npm test
 ### Adding Items
 1. **Quick Add**: Type item name and press Enter
 2. **Detailed Add**: Click "Detailed" to set quantity, unit, price, and category
+3. **Recipe Integration**: Click "From Recipe" to search for recipes and add ingredients
+
+### Recipe Integration
+- **Search Recipes**: Find recipes from trusted cooking sources
+- **View Details**: See ingredients, instructions, cooking time, and servings
+- **Select Ingredients**: Choose which ingredients to add to your list
+- **Automatic Categorization**: Ingredients are automatically sorted into appropriate categories
 
 ### Managing Your List
 - **Complete items**: Click the circle next to items when purchased
@@ -133,7 +140,9 @@ frontend/
 ```
 
 ### Key Components
-- **AddItemForm**: Smart form for adding new items
+- **AddItemForm**: Smart form for adding new items with recipe integration
+- **RecipeSearch**: Recipe discovery and search interface
+- **RecipeModal**: Detailed recipe view with ingredient selection
 - **GroceryList**: Main list display with category organization
 - **GroceryItemComponent**: Individual item with editing capabilities
 - **SmartSuggestions**: AI-like suggestions based on history
@@ -141,6 +150,7 @@ frontend/
 ### Custom Hooks
 - **useGroceryList**: Main state management for the grocery list
 - Handles all CRUD operations, persistence, and smart features
+- Supports batch addition of items for recipe integration
 
 ## 🌟 Smart Features Explained
 
@@ -174,7 +184,7 @@ This is a portfolio project, but suggestions and feedback are welcome!
 
 ## 📈 Future Enhancements
 
-- [ ] Recipe integration (add ingredients from recipes)
+- [x] Recipe integration (add ingredients from recipes)
 - [ ] Store location mapping
 - [ ] Nutritional information database
 - [ ] Cloud sync across devices

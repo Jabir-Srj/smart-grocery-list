@@ -12,6 +12,7 @@ function App() {
     shoppingHistory,
     loading,
     addItem,
+    addItems,
     updateItem,
     removeItem,
     toggleItemCompletion,
@@ -86,6 +87,7 @@ function App() {
         <div className="container">
           <AddItemForm
             onAddItem={addItem}
+            onAddItems={addItems}
             isExpanded={isAddFormExpanded}
             onToggleExpanded={() => setIsAddFormExpanded(!isAddFormExpanded)}
           />

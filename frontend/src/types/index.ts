@@ -63,6 +63,17 @@ export interface Recipe {
     unit: string;
   }>;
   servings: number;
+  image?: string;
+  instructions?: string;
+  readyInMinutes?: number;
+  sourceUrl?: string;
+}
+
+export interface RecipeSearchResult {
+  id: string;
+  title: string;
+  image: string;
+  readyInMinutes: number;
 }
 
 export interface StoreLayout {

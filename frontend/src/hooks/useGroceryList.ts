@@ -80,6 +80,39 @@ export function useGroceryList() {
     setShoppingList(updatedList);
   }, [shoppingList]);
 
+  const addItems = useCallback((
+    itemsToAdd: Array<{
+      name: string;
+      quantity: number;
+      unit: string;
+      price?: number;
+      category?: GroceryCategory;
+    }>
+  ) => {
+    if (!shoppingList) return;
+
+    const newItems: GroceryItem[] = itemsToAdd.map(item => ({
+      id: generateId(),
+      name: item.name.trim(),
+      category: item.category || categorizeItem(item.name),
+      quantity: item.quantity,
+      unit: item.unit,
+      price: item.price,
+      isCompleted: false,
+      dateAdded: new Date()
+    }));
+
+    const allItems = [...shoppingList.items, ...newItems];
+    const updatedList = {
+      ...shoppingList,
+      items: allItems,
+      totalCost: calculateTotalCost(allItems),
+      dateModified: new Date()
+    };
+
+    setShoppingList(updatedList);
+  }, [shoppingList]);
+
   const updateItem = useCallback((itemId: string, updates: Partial<GroceryItem>) => {
     if (!shoppingList) return;
 
@@ -196,6 +229,7 @@ export function useGroceryList() {
     shoppingHistory,
     loading,
     addItem,
+    addItems,
     updateItem,
     removeItem,
     toggleItemCompletion,

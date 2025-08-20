@@ -3,7 +3,6 @@
   "buildCommand": "npm run build",
   "installCommand": "npm run install-deps",
   "outputDirectory": "frontend/dist",
-  "functions": {},
   "routes": [
     {
       "src": "/assets/(.*)",

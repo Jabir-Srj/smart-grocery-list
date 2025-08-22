@@ -94,6 +94,62 @@ const MOCK_RECIPE_DETAILS: Record<string, Recipe> = {
     instructions: '1. Wash and chop romaine lettuce.\n2. Toss lettuce with dressing.\n3. Add parmesan cheese and croutons.\n4. Top with anchovies if desired.',
     readyInMinutes: 15,
     sourceUrl: 'https://example.com/caesar-salad'
+  },
+  'mock-4': {
+    id: 'mock-4',
+    name: 'Beef Tacos',
+    ingredients: [
+      { name: 'Ground Beef', quantity: 1, unit: 'lbs' },
+      { name: 'Taco Shells', quantity: 8, unit: 'pcs' },
+      { name: 'Lettuce', quantity: 1, unit: 'cup' },
+      { name: 'Tomatoes', quantity: 2, unit: 'pcs' },
+      { name: 'Cheddar Cheese', quantity: 1, unit: 'cup' },
+      { name: 'Sour Cream', quantity: 0.5, unit: 'cup' },
+      { name: 'Taco Seasoning', quantity: 1, unit: 'package' },
+      { name: 'Onion', quantity: 1, unit: 'pcs' }
+    ],
+    servings: 4,
+    image: 'https://via.placeholder.com/300x200/E91E63/white?text=Beef+Tacos',
+    instructions: '1. Brown ground beef in a large skillet.\n2. Add diced onion and cook until tender.\n3. Add taco seasoning and water according to package directions.\n4. Simmer until thickened.\n5. Warm taco shells in oven.\n6. Fill shells with beef mixture.\n7. Top with lettuce, tomatoes, cheese, and sour cream.',
+    readyInMinutes: 30,
+    sourceUrl: 'https://example.com/beef-tacos'
+  },
+  'mock-5': {
+    id: 'mock-5',
+    name: 'Vegetable Soup',
+    ingredients: [
+      { name: 'Carrots', quantity: 3, unit: 'pcs' },
+      { name: 'Celery', quantity: 3, unit: 'pcs' },
+      { name: 'Onion', quantity: 1, unit: 'pcs' },
+      { name: 'Potatoes', quantity: 2, unit: 'pcs' },
+      { name: 'Green Beans', quantity: 1, unit: 'cup' },
+      { name: 'Vegetable Broth', quantity: 6, unit: 'cup' },
+      { name: 'Diced Tomatoes', quantity: 1, unit: 'can' },
+      { name: 'Italian Seasoning', quantity: 1, unit: 'tsp' }
+    ],
+    servings: 6,
+    image: 'https://via.placeholder.com/300x200/8BC34A/white?text=Vegetable+Soup',
+    instructions: '1. Dice all vegetables.\n2. Heat oil in large pot.\n3. Sauté onion, carrots, and celery until tender.\n4. Add potatoes, green beans, broth, and tomatoes.\n5. Add seasoning and bring to boil.\n6. Reduce heat and simmer 20-25 minutes until vegetables are tender.\n7. Season with salt and pepper to taste.',
+    readyInMinutes: 40,
+    sourceUrl: 'https://example.com/vegetable-soup'
+  },
+  'mock-6': {
+    id: 'mock-6',
+    name: 'Grilled Salmon',
+    ingredients: [
+      { name: 'Salmon Fillets', quantity: 4, unit: 'pcs' },
+      { name: 'Olive Oil', quantity: 2, unit: 'tbsp' },
+      { name: 'Lemon', quantity: 1, unit: 'pcs' },
+      { name: 'Garlic', quantity: 2, unit: 'pcs' },
+      { name: 'Fresh Dill', quantity: 2, unit: 'tbsp' },
+      { name: 'Salt', quantity: 1, unit: 'tsp' },
+      { name: 'Black Pepper', quantity: 0.5, unit: 'tsp' }
+    ],
+    servings: 4,
+    image: 'https://via.placeholder.com/300x200/FF5722/white?text=Grilled+Salmon',
+    instructions: '1. Preheat grill to medium-high heat.\n2. Brush salmon with olive oil.\n3. Season with salt, pepper, and minced garlic.\n4. Grill 4-6 minutes per side until fish flakes easily.\n5. Squeeze fresh lemon juice over salmon.\n6. Garnish with fresh dill and serve immediately.',
+    readyInMinutes: 18,
+    sourceUrl: 'https://example.com/grilled-salmon'
   }
 };
 

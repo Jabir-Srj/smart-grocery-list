@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, ChefHat } from 'lucide-react';
-import { GroceryCategory } from '../types';
+import { GroceryCategory, Recipe } from '../types';
 import { RecipeSearch } from './RecipeSearch';
 import { RecipeModal } from './RecipeModal';
 import { categorizeItem } from '../utils/groceryUtils';
@@ -15,13 +15,18 @@ interface AddItemFormProps {
     price?: number;
     category?: GroceryCategory;
   }>) => void;
+  onShowCookingInstructions: (recipe: Recipe, addedIngredients: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>) => void;
   isExpanded: boolean;
   onToggleExpanded: () => void;
 }
 
 const UNITS = ['pcs', 'lbs', 'oz', 'kg', 'g', 'gallon', 'liter', 'dozen', 'package', 'bag'];
 
-export function AddItemForm({ onAddItem, onAddItems, isExpanded, onToggleExpanded }: AddItemFormProps) {
+export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, isExpanded, onToggleExpanded }: AddItemFormProps) {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [unit, setUnit] = useState('pcs');
@@ -184,6 +189,7 @@ export function AddItemForm({ onAddItem, onAddItems, isExpanded, onToggleExpande
           recipeId={selectedRecipeId}
           onClose={() => setSelectedRecipeId(null)}
           onAddIngredients={handleAddIngredients}
+          onShowCookingInstructions={onShowCookingInstructions}
         />
       )}
     </div>

@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { ShoppingCart, BarChart3, History } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ShoppingCart, BarChart3, History, ChefHat } from 'lucide-react';
 import { AddItemForm } from './components/AddItemForm';
 import { GroceryList } from './components/GroceryList';
 import { SmartSuggestions } from './components/SmartSuggestions';
+import { HowToCook } from './components/HowToCook';
 import { useGroceryList } from './hooks/useGroceryList';
+import { Recipe } from './types';
 import './App.css';
 
 function App() {
@@ -26,6 +28,38 @@ function App() {
   const [isAddFormExpanded, setIsAddFormExpanded] = useState(false);
   const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [budgetInput, setBudgetInput] = useState('');
+  const [currentView, setCurrentView] = useState<'main' | 'cooking'>('main');
+  const [cookingData, setCookingData] = useState<{
+    recipe: Recipe;
+    addedIngredients: Array<{
+      name: string;
+      quantity: number;
+      unit: string;
+    }>;
+  } | null>(null);
+
+  // Load cooking data from localStorage on mount
+  useEffect(() => {
+    const savedCookingData = localStorage.getItem('smartGroceryList_cookingData');
+    if (savedCookingData) {
+      try {
+        const parsedData = JSON.parse(savedCookingData);
+        setCookingData(parsedData);
+      } catch (error) {
+        console.error('Failed to parse saved cooking data:', error);
+        localStorage.removeItem('smartGroceryList_cookingData');
+      }
+    }
+  }, []);
+
+  // Save cooking data to localStorage whenever it changes
+  useEffect(() => {
+    if (cookingData) {
+      localStorage.setItem('smartGroceryList_cookingData', JSON.stringify(cookingData));
+    } else {
+      localStorage.removeItem('smartGroceryList_cookingData');
+    }
+  }, [cookingData]);
 
   const suggestions = getSuggestions();
 
@@ -34,6 +68,26 @@ function App() {
     setBudget(budget);
     setShowBudgetModal(false);
     setBudgetInput('');
+  };
+
+  const handleShowCookingInstructions = (recipe: Recipe, addedIngredients: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>) => {
+    setCookingData({ recipe, addedIngredients });
+    setCurrentView('cooking');
+  };
+
+  const handleBackToMain = () => {
+    setCurrentView('main');
+    // Don't clear cooking data anymore - keep it for later access
+  };
+
+  const handleViewCooking = () => {
+    if (cookingData) {
+      setCurrentView('cooking');
+    }
   };
 
   if (loading) {
@@ -63,6 +117,17 @@ function App() {
     );
   }
 
+  // Show cooking instructions view
+  if (currentView === 'cooking' && cookingData) {
+    return (
+      <HowToCook
+        recipe={cookingData.recipe}
+        addedIngredients={cookingData.addedIngredients}
+        onBackToList={handleBackToMain}
+      />
+    );
+  }
+
   return (
     <div className="app">
       <header className="app-header">
@@ -73,6 +138,16 @@ function App() {
           </div>
           
           <div className="header-actions">
+            {cookingData && (
+              <button
+                onClick={handleViewCooking}
+                className="header-button cooking-button"
+                title="View Cooking Instructions"
+              >
+                <ChefHat size={20} />
+              </button>
+            )}
+            
             <button
               onClick={() => {
                 setBudgetInput(shoppingList.budget?.toString() || '');
@@ -97,6 +172,7 @@ function App() {
           <AddItemForm
             onAddItem={addItem}
             onAddItems={addItems}
+            onShowCookingInstructions={handleShowCookingInstructions}
             isExpanded={isAddFormExpanded}
             onToggleExpanded={() => setIsAddFormExpanded(!isAddFormExpanded)}
           />

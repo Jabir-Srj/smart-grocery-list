@@ -37,6 +37,8 @@
   /* Color variables */
   --color-primary: #4f46e5;
   --color-primary-hover: #4338ca;
+  --color-primary-dark: #3730a3;
+  --color-primary-light: #eef2ff;
   --color-success: #10b981;
   --color-success-hover: #059669;
   --color-danger: #dc2626;
@@ -220,6 +222,16 @@ body {
 .header-button:hover {
   background: var(--color-gray-200);
   color: var(--color-gray-700);
+}
+
+.cooking-button {
+  background: #fef3e2 !important;
+  color: #d97706 !important;
+}
+
+.cooking-button:hover {
+  background: #fed7aa !important;
+  color: #c2410c !important;
 }
 
 .stats-badge {

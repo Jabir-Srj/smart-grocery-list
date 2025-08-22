@@ -20,6 +20,8 @@
   width: 100%;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
 }
 
 .recipe-modal-header {
@@ -28,6 +30,7 @@
   gap: var(--space-lg);
   padding: var(--space-xl);
   border-bottom: 1px solid var(--color-gray-200);
+  flex-shrink: 0;
 }
 
 .recipe-modal-image {
@@ -68,8 +71,9 @@
 
 .recipe-modal-content {
   padding: var(--space-xl);
-  max-height: 60vh;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 
 .recipe-ingredients {
@@ -156,6 +160,7 @@
   gap: var(--space-sm);
   justify-content: flex-end;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .btn-primary {
@@ -171,6 +176,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  min-height: var(--touch-target-min);
 }
 
 .btn-primary:hover {
@@ -192,6 +198,10 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: var(--touch-target-min);
 }
 
 .btn-secondary:hover {
@@ -261,6 +271,14 @@
   .recipe-modal-footer {
     padding: var(--space-lg);
     flex-direction: column-reverse;
+    gap: var(--space-md);
+  }
+  
+  .recipe-modal-footer .btn-primary,
+  .recipe-modal-footer .btn-secondary {
+    width: 100%;
+    justify-content: center;
+    min-height: var(--touch-target-comfortable);
   }
 
   .recipe-modal-actions {

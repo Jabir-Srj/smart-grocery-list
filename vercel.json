@@ -1,13 +1,9 @@
 {
-  "framework": null,
-  "buildCommand": "npm run build",
-  "outputDirectory": "frontend/dist",
-  "installCommand": "npm run install-deps",
-  "functions": {
-    "app/api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": null,
+  "rootDirectory": "frontend",
+  "framework": "vite",
   "rewrites": [
     {
       "source": "/(.*)",

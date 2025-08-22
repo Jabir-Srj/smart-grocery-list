@@ -5,23 +5,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Source files that don't need to be deployed in final output but are needed for build
-# Note: Vercel needs these during build, so we don't exclude them
-
 # Build artifacts and cache
 *.tsbuildinfo
 .cache
 .parcel-cache
 .eslintcache
 
-# Development and test files
-frontend/eslint.config.js
-frontend/vite.config.ts
-frontend/tsconfig*.json
-frontend/README.md
-
 # Test files
-frontend/test
+test
 **/*.test.*
 **/*.spec.*
 

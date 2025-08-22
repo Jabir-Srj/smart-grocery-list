@@ -37,6 +37,8 @@
   /* Color variables */
   --color-primary: #4f46e5;
   --color-primary-hover: #4338ca;
+  --color-primary-dark: #3730a3;
+  --color-primary-light: #eef2ff;
   --color-success: #10b981;
   --color-success-hover: #059669;
   --color-danger: #dc2626;

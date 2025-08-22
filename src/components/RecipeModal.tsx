@@ -13,9 +13,14 @@ interface RecipeModalProps {
     unit: string;
     category?: GroceryCategory;
   }>) => void;
+  onShowCookingInstructions: (recipe: Recipe, addedIngredients: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>) => void;
 }
 
-export function RecipeModal({ recipeId, onClose, onAddIngredients }: RecipeModalProps) {
+export function RecipeModal({ recipeId, onClose, onAddIngredients, onShowCookingInstructions }: RecipeModalProps) {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,6 +89,10 @@ export function RecipeModal({ recipeId, onClose, onAddIngredients }: RecipeModal
       .filter(Boolean);
 
     onAddIngredients(ingredientsToAdd);
+    
+    // Show cooking instructions after adding ingredients
+    onShowCookingInstructions(recipe, ingredientsToAdd);
+    
     onClose();
   };
 

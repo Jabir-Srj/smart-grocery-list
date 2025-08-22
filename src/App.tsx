@@ -3,7 +3,9 @@ import { ShoppingCart, BarChart3, History } from 'lucide-react';
 import { AddItemForm } from './components/AddItemForm';
 import { GroceryList } from './components/GroceryList';
 import { SmartSuggestions } from './components/SmartSuggestions';
+import { HowToCook } from './components/HowToCook';
 import { useGroceryList } from './hooks/useGroceryList';
+import { Recipe } from './types';
 import './App.css';
 
 function App() {
@@ -26,6 +28,15 @@ function App() {
   const [isAddFormExpanded, setIsAddFormExpanded] = useState(false);
   const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [budgetInput, setBudgetInput] = useState('');
+  const [currentView, setCurrentView] = useState<'main' | 'cooking'>('main');
+  const [cookingData, setCookingData] = useState<{
+    recipe: Recipe;
+    addedIngredients: Array<{
+      name: string;
+      quantity: number;
+      unit: string;
+    }>;
+  } | null>(null);
 
   const suggestions = getSuggestions();
 
@@ -34,6 +45,20 @@ function App() {
     setBudget(budget);
     setShowBudgetModal(false);
     setBudgetInput('');
+  };
+
+  const handleShowCookingInstructions = (recipe: Recipe, addedIngredients: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+  }>) => {
+    setCookingData({ recipe, addedIngredients });
+    setCurrentView('cooking');
+  };
+
+  const handleBackToMain = () => {
+    setCurrentView('main');
+    setCookingData(null);
   };
 
   if (loading) {
@@ -60,6 +85,17 @@ function App() {
         <h2>Something went wrong</h2>
         <p>Please refresh the page to try again.</p>
       </div>
+    );
+  }
+
+  // Show cooking instructions view
+  if (currentView === 'cooking' && cookingData) {
+    return (
+      <HowToCook
+        recipe={cookingData.recipe}
+        addedIngredients={cookingData.addedIngredients}
+        onBackToList={handleBackToMain}
+      />
     );
   }
 
@@ -97,6 +133,7 @@ function App() {
           <AddItemForm
             onAddItem={addItem}
             onAddItems={addItems}
+            onShowCookingInstructions={handleShowCookingInstructions}
             isExpanded={isAddFormExpanded}
             onToggleExpanded={() => setIsAddFormExpanded(!isAddFormExpanded)}
           />

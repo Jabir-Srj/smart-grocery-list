@@ -39,8 +39,17 @@ function App() {
   if (loading) {
     return (
       <div className="loading-screen">
-        <ShoppingCart size={48} />
-        <h2>Loading your smart grocery list...</h2>
+        <div className="loading-content">
+          <div className="loading-spinner">
+            <ShoppingCart size={48} className="loading-icon" />
+          </div>
+          <h2>Loading your smart grocery list...</h2>
+          <div className="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
       </div>
     );
   }

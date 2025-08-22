@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ShoppingCart, BarChart3, History } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ShoppingCart, BarChart3, History, ChefHat } from 'lucide-react';
 import { AddItemForm } from './components/AddItemForm';
 import { GroceryList } from './components/GroceryList';
 import { SmartSuggestions } from './components/SmartSuggestions';
@@ -38,6 +38,29 @@ function App() {
     }>;
   } | null>(null);
 
+  // Load cooking data from localStorage on mount
+  useEffect(() => {
+    const savedCookingData = localStorage.getItem('smartGroceryList_cookingData');
+    if (savedCookingData) {
+      try {
+        const parsedData = JSON.parse(savedCookingData);
+        setCookingData(parsedData);
+      } catch (error) {
+        console.error('Failed to parse saved cooking data:', error);
+        localStorage.removeItem('smartGroceryList_cookingData');
+      }
+    }
+  }, []);
+
+  // Save cooking data to localStorage whenever it changes
+  useEffect(() => {
+    if (cookingData) {
+      localStorage.setItem('smartGroceryList_cookingData', JSON.stringify(cookingData));
+    } else {
+      localStorage.removeItem('smartGroceryList_cookingData');
+    }
+  }, [cookingData]);
+
   const suggestions = getSuggestions();
 
   const handleSetBudget = () => {
@@ -58,7 +81,13 @@ function App() {
 
   const handleBackToMain = () => {
     setCurrentView('main');
-    setCookingData(null);
+    // Don't clear cooking data anymore - keep it for later access
+  };
+
+  const handleViewCooking = () => {
+    if (cookingData) {
+      setCurrentView('cooking');
+    }
   };
 
   if (loading) {
@@ -109,6 +138,16 @@ function App() {
           </div>
           
           <div className="header-actions">
+            {cookingData && (
+              <button
+                onClick={handleViewCooking}
+                className="header-button cooking-button"
+                title="View Cooking Instructions"
+              >
+                <ChefHat size={20} />
+              </button>
+            )}
+            
             <button
               onClick={() => {
                 setBudgetInput(shoppingList.budget?.toString() || '');

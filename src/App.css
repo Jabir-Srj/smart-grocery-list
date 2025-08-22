@@ -224,6 +224,16 @@ body {
   color: var(--color-gray-700);
 }
 
+.cooking-button {
+  background: #fef3e2 !important;
+  color: #d97706 !important;
+}
+
+.cooking-button:hover {
+  background: #fed7aa !important;
+  color: #c2410c !important;
+}
+
 .stats-badge {
   display: flex;
   align-items: center;

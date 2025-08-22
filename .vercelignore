@@ -5,24 +5,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Source files that don't need to be deployed
-frontend/src
-frontend/public
-
 # Build artifacts and cache
 *.tsbuildinfo
 .cache
 .parcel-cache
 .eslintcache
 
-# Development and test files
-frontend/eslint.config.js
-frontend/vite.config.ts
-frontend/tsconfig*.json
-frontend/README.md
-
 # Test files
-frontend/test
+test
 **/*.test.*
 **/*.spec.*
 

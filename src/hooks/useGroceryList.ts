@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ShoppingList, GroceryItem, GroceryCategory, ShoppingHistory } from '../types';
 import { storageService } from '../services/storageService';
 import { generateId, categorizeItem, calculateTotalCost, generateSuggestions } from '../utils/groceryUtils';
@@ -70,10 +70,11 @@ export function useGroceryList() {
       dateAdded: new Date()
     };
 
-    const updatedList = {
+    const updatedItems = [...shoppingList.items, newItem];
+    const updatedList: ShoppingList = {
       ...shoppingList,
-      items: [...shoppingList.items, newItem],
-      totalCost: calculateTotalCost([...shoppingList.items, newItem]),
+      items: updatedItems,
+      totalCost: calculateTotalCost(updatedItems),
       dateModified: new Date()
     };
 
@@ -103,7 +104,7 @@ export function useGroceryList() {
     }));
 
     const allItems = [...shoppingList.items, ...newItems];
-    const updatedList = {
+    const updatedList: ShoppingList = {
       ...shoppingList,
       items: allItems,
       totalCost: calculateTotalCost(allItems),
@@ -120,7 +121,7 @@ export function useGroceryList() {
       item.id === itemId ? { ...item, ...updates } : item
     );
 
-    const updatedList = {
+    const updatedList: ShoppingList = {
       ...shoppingList,
       items: updatedItems,
       totalCost: calculateTotalCost(updatedItems),
@@ -134,7 +135,7 @@ export function useGroceryList() {
     if (!shoppingList) return;
 
     const updatedItems = shoppingList.items.filter(item => item.id !== itemId);
-    const updatedList = {
+    const updatedList: ShoppingList = {
       ...shoppingList,
       items: updatedItems,
       totalCost: calculateTotalCost(updatedItems),
@@ -151,7 +152,7 @@ export function useGroceryList() {
       item.id === itemId ? { ...item, isCompleted: !item.isCompleted } : item
     );
 
-    const updatedList = {
+    const updatedList: ShoppingList = {
       ...shoppingList,
       items: updatedItems,
       dateModified: new Date()
@@ -172,7 +173,7 @@ export function useGroceryList() {
       setShoppingHistory(storageService.getShoppingHistory());
     }
 
-    const updatedList = {
+    const updatedList: ShoppingList = {
       ...shoppingList,
       items: remainingItems,
       totalCost: calculateTotalCost(remainingItems),
@@ -185,7 +186,7 @@ export function useGroceryList() {
   const clearAllItems = useCallback(() => {
     if (!shoppingList) return;
 
-    const updatedList = {
+    const updatedList: ShoppingList = {
       ...shoppingList,
       items: [],
       totalCost: 0,
@@ -198,7 +199,7 @@ export function useGroceryList() {
   const setBudget = useCallback((budget?: number) => {
     if (!shoppingList) return;
 
-    const updatedList = {
+    const updatedList: ShoppingList = {
       ...shoppingList,
       budget,
       dateModified: new Date()
@@ -207,12 +208,16 @@ export function useGroceryList() {
     setShoppingList(updatedList);
   }, [shoppingList]);
 
-  const getSuggestions = useCallback(() => {
+  // Memoized suggestions - only recalculate when history or current items change
+  const suggestions = useMemo(() => {
     if (!shoppingList) return [];
-    
-    const suggestions = generateSuggestions(shoppingHistory.purchases, shoppingList.items);
+    return generateSuggestions(shoppingHistory.purchases, shoppingList.items);
+  }, [shoppingList?.items, shoppingHistory.purchases]);
+
+  // Keep getSuggestions for backward compatibility but use memoized value
+  const getSuggestions = useCallback(() => {
     return suggestions;
-  }, [shoppingList, shoppingHistory]);
+  }, [suggestions]);
 
   const addSuggestion = useCallback((suggestion: GroceryItem) => {
     addItem(

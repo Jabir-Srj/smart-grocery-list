@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ShoppingCart, BarChart3, History, ChefHat } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { ShoppingCart, BarChart3, History, ChefHat, Moon, Sun } from 'lucide-react';
 import { AddItemForm } from './components/AddItemForm';
 import { GroceryList } from './components/GroceryList';
 import { SmartSuggestions } from './components/SmartSuggestions';
@@ -7,6 +7,8 @@ import { HowToCook } from './components/HowToCook';
 import { useGroceryList } from './hooks/useGroceryList';
 import { Recipe } from './types';
 import './App.css';
+
+type Theme = 'light' | 'dark';
 
 function App() {
   const {
@@ -29,6 +31,12 @@ function App() {
   const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [budgetInput, setBudgetInput] = useState('');
   const [currentView, setCurrentView] = useState<'main' | 'cooking'>('main');
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Check localStorage first, then system preference
+    const saved = localStorage.getItem('smartGroceryList_theme') as Theme | null;
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [cookingData, setCookingData] = useState<{
     recipe: Recipe;
     addedIngredients: Array<{
@@ -37,6 +45,25 @@ function App() {
       unit: string;
     }>;
   } | null>(null);
+
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('smartGroceryList_theme', theme);
+  }, [theme]);
+
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      const saved = localStorage.getItem('smartGroceryList_theme');
+      if (!saved) {
+        setTheme(e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   // Load cooking data from localStorage on mount
   useEffect(() => {
@@ -63,42 +90,67 @@ function App() {
 
   const suggestions = getSuggestions();
 
-  const handleSetBudget = () => {
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  }, []);
+
+  const handleSetBudget = useCallback(() => {
     const budget = budgetInput ? parseFloat(budgetInput) : undefined;
     setBudget(budget);
     setShowBudgetModal(false);
     setBudgetInput('');
-  };
+  }, [budgetInput, setBudget]);
 
-  const handleShowCookingInstructions = (recipe: Recipe, addedIngredients: Array<{
+  const handleShowCookingInstructions = useCallback((recipe: Recipe, addedIngredients: Array<{
     name: string;
     quantity: number;
     unit: string;
   }>) => {
     setCookingData({ recipe, addedIngredients });
     setCurrentView('cooking');
-  };
+  }, []);
 
-  const handleBackToMain = () => {
+  const handleBackToMain = useCallback(() => {
     setCurrentView('main');
-    // Don't clear cooking data anymore - keep it for later access
-  };
+  }, []);
 
-  const handleViewCooking = () => {
+  const handleViewCooking = useCallback(() => {
     if (cookingData) {
       setCurrentView('cooking');
     }
-  };
+  }, [cookingData]);
+
+  const handleBudgetModalOpen = useCallback(() => {
+    setBudgetInput(shoppingList?.budget?.toString() || '');
+    setShowBudgetModal(true);
+  }, [shoppingList?.budget]);
+
+  const handleBudgetModalClose = useCallback(() => {
+    setShowBudgetModal(false);
+  }, []);
+
+  const handleRemoveBudget = useCallback(() => {
+    setBudget(undefined);
+    setShowBudgetModal(false);
+  }, [setBudget]);
+
+  const handleBudgetKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSetBudget();
+    } else if (e.key === 'Escape') {
+      handleBudgetModalClose();
+    }
+  }, [handleSetBudget, handleBudgetModalClose]);
 
   if (loading) {
     return (
-      <div className="loading-screen">
+      <div className="loading-screen" role="status" aria-label="Loading application">
         <div className="loading-content">
           <div className="loading-spinner">
-            <ShoppingCart size={48} className="loading-icon" />
+            <ShoppingCart size={48} className="loading-icon" aria-hidden="true" />
           </div>
           <h2>Loading your smart grocery list...</h2>
-          <div className="loading-dots">
+          <div className="loading-dots" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
@@ -110,7 +162,7 @@ function App() {
 
   if (!shoppingList) {
     return (
-      <div className="error-screen">
+      <div className="error-screen" role="alert">
         <h2>Something went wrong</h2>
         <p>Please refresh the page to try again.</p>
       </div>
@@ -133,41 +185,49 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <div className="header-title">
-            <ShoppingCart size={32} />
+            <ShoppingCart size={32} aria-hidden="true" />
             <h1>Smart Grocery List</h1>
           </div>
           
           <div className="header-actions">
+            <button
+              onClick={toggleTheme}
+              className="header-button theme-toggle"
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            >
+              {theme === 'light' ? <Moon size={20} aria-hidden="true" /> : <Sun size={20} aria-hidden="true" />}
+            </button>
+
             {cookingData && (
               <button
                 onClick={handleViewCooking}
                 className="header-button cooking-button"
                 title="View Cooking Instructions"
+                aria-label="View cooking instructions for saved recipe"
               >
-                <ChefHat size={20} />
+                <ChefHat size={20} aria-hidden="true" />
               </button>
             )}
             
             <button
-              onClick={() => {
-                setBudgetInput(shoppingList.budget?.toString() || '');
-                setShowBudgetModal(true);
-              }}
+              onClick={handleBudgetModalOpen}
               className="header-button"
               title="Set Budget"
+              aria-label="Set shopping budget"
             >
-              <BarChart3 size={20} />
+              <BarChart3 size={20} aria-hidden="true" />
             </button>
             
-            <div className="stats-badge">
-              <History size={16} />
+            <div className="stats-badge" role="status" aria-label={`${shoppingHistory.purchases.length} items in purchase history`}>
+              <History size={16} aria-hidden="true" />
               <span>{shoppingHistory.purchases.length} purchases</span>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="app-main">
+      <main className="app-main" id="main-content">
         <div className="container">
           <AddItemForm
             onAddItem={addItem}
@@ -198,9 +258,15 @@ function App() {
 
       {/* Budget Modal */}
       {showBudgetModal && (
-        <div className="modal-overlay" onClick={() => setShowBudgetModal(false)}>
+        <div 
+          className="modal-overlay" 
+          onClick={handleBudgetModalClose}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="budget-modal-title"
+        >
           <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Set Shopping Budget</h3>
+            <h3 id="budget-modal-title">Set Shopping Budget</h3>
             <div className="modal-content">
               <input
                 type="number"
@@ -208,24 +274,32 @@ function App() {
                 step="0.01"
                 value={budgetInput}
                 onChange={(e) => setBudgetInput(e.target.value)}
+                onKeyDown={handleBudgetKeyDown}
                 placeholder="Enter budget amount"
                 className="budget-input"
                 autoFocus
+                aria-label="Budget amount in dollars"
               />
               <div className="modal-actions">
-                <button onClick={() => setShowBudgetModal(false)} className="btn-secondary">
+                <button 
+                  onClick={handleBudgetModalClose} 
+                  className="btn-secondary"
+                  type="button"
+                >
                   Cancel
                 </button>
-                <button onClick={handleSetBudget} className="btn-primary">
+                <button 
+                  onClick={handleSetBudget} 
+                  className="btn-primary"
+                  type="button"
+                >
                   Set Budget
                 </button>
                 {shoppingList.budget && (
                   <button
-                    onClick={() => {
-                      setBudget(undefined);
-                      setShowBudgetModal(false);
-                    }}
+                    onClick={handleRemoveBudget}
                     className="btn-danger"
+                    type="button"
                   >
                     Remove Budget
                   </button>
@@ -238,8 +312,8 @@ function App() {
 
       <footer className="app-footer">
         <div className="container">
-          <p>Smart Grocery List - Built with React & TypeScript</p>
-          <p>Automatically categorizes items • Tracks shopping history • Budget management</p>
+          <p>Smart Grocery List — Built with React & TypeScript</p>
+          <p>Auto-categorization • Shopping history • Budget management</p>
         </div>
       </footer>
     </div>

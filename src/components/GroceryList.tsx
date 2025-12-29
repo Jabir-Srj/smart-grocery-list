@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import { ShoppingBag, Trash2, CheckCircle } from 'lucide-react';
 import { GroceryItem } from '../types';
 import { GroceryItemComponent } from './GroceryItemComponent';
@@ -14,7 +15,7 @@ interface GroceryListProps {
   budget?: number;
 }
 
-export function GroceryList({
+export const GroceryList = memo(function GroceryList({
   items,
   onToggleCompletion,
   onUpdateItem,
@@ -23,38 +24,47 @@ export function GroceryList({
   onClearAll,
   budget
 }: GroceryListProps) {
+  // Memoize computed values
+  const groupedItems = useMemo(() => groupItemsByCategory(items), [items]);
+  const completionPercentage = useMemo(() => getCompletionPercentage(items), [items]);
+  const totalCost = useMemo(() => calculateTotalCost(items), [items]);
+  const completedItems = useMemo(() => items.filter(item => item.isCompleted), [items]);
+  const isOverBudget = budget && totalCost > budget;
+
   if (items.length === 0) {
     return (
-      <div className="empty-list">
-        <ShoppingBag size={48} />
+      <div className="empty-list" role="status" aria-label="Empty grocery list">
+        <ShoppingBag size={48} aria-hidden="true" />
         <h3>Your grocery list is empty</h3>
         <p>Start adding items to create your smart grocery list!</p>
       </div>
     );
   }
 
-  const groupedItems = groupItemsByCategory(items);
-  const completionPercentage = getCompletionPercentage(items);
-  const totalCost = calculateTotalCost(items);
-  const completedItems = items.filter(item => item.isCompleted);
-
-  const isOverBudget = budget && totalCost > budget;
-
   return (
-    <div className="grocery-list">
+    <section className="grocery-list" aria-labelledby="grocery-list-heading">
+      <h2 id="grocery-list-heading" className="sr-only">Grocery List</h2>
+      
       {/* Summary Header */}
-      <div className="list-summary">
+      <div className="list-summary" role="region" aria-label="Shopping summary">
         <div className="summary-stats">
           <div className="stat">
-            <span className="stat-value">{items.length}</span>
+            <span className="stat-value" aria-label={`${items.length} items`}>
+              {items.length}
+            </span>
             <span className="stat-label">Items</span>
           </div>
           <div className="stat">
-            <span className="stat-value">{completionPercentage}%</span>
+            <span className="stat-value" aria-label={`${completionPercentage}% complete`}>
+              {completionPercentage}%
+            </span>
             <span className="stat-label">Complete</span>
           </div>
           <div className="stat">
-            <span className={`stat-value ${isOverBudget ? 'over-budget' : ''}`}>
+            <span 
+              className={`stat-value ${isOverBudget ? 'over-budget' : ''}`}
+              aria-label={`Total cost: ${formatCurrency(totalCost)}${isOverBudget ? ', over budget' : ''}`}
+            >
               {formatCurrency(totalCost)}
             </span>
             <span className="stat-label">
@@ -64,7 +74,7 @@ export function GroceryList({
         </div>
 
         {/* Progress Bar */}
-        <div className="progress-container">
+        <div className="progress-container" role="progressbar" aria-valuenow={completionPercentage} aria-valuemin={0} aria-valuemax={100} aria-label="Shopping progress">
           <div className="progress-bar">
             <div 
               className="progress-fill" 
@@ -77,15 +87,25 @@ export function GroceryList({
         </div>
 
         {/* Action Buttons */}
-        <div className="list-actions">
+        <div className="list-actions" role="group" aria-label="List actions">
           {completedItems.length > 0 && (
-            <button onClick={onClearCompleted} className="action-btn clear-completed">
-              <CheckCircle size={16} />
+            <button 
+              onClick={onClearCompleted} 
+              className="action-btn clear-completed"
+              aria-label={`Clear ${completedItems.length} completed items`}
+              type="button"
+            >
+              <CheckCircle size={16} aria-hidden="true" />
               Clear Completed ({completedItems.length})
             </button>
           )}
-          <button onClick={onClearAll} className="action-btn clear-all">
-            <Trash2 size={16} />
+          <button 
+            onClick={onClearAll} 
+            className="action-btn clear-all"
+            aria-label="Clear all items from list"
+            type="button"
+          >
+            <Trash2 size={16} aria-hidden="true" />
             Clear All
           </button>
         </div>
@@ -93,7 +113,11 @@ export function GroceryList({
 
       {/* Budget Warning */}
       {isOverBudget && (
-        <div className="budget-warning">
+        <div 
+          className="budget-warning" 
+          role="alert" 
+          aria-live="polite"
+        >
           <strong>Over Budget!</strong> You're {formatCurrency(totalCost - budget!)} over your budget of {formatCurrency(budget!)}.
         </div>
       )}
@@ -107,18 +131,32 @@ export function GroceryList({
           const categoryProgress = Math.round((completedInCategory / categoryItems.length) * 100);
 
           return (
-            <div key={category} className="category-section">
+            <section 
+              key={category} 
+              className="category-section"
+              aria-labelledby={`category-${category.replace(/\s+/g, '-').toLowerCase()}`}
+            >
               <div className="category-header">
-                <h4 className="category-title">{category}</h4>
+                <h3 
+                  className="category-title"
+                  id={`category-${category.replace(/\s+/g, '-').toLowerCase()}`}
+                >
+                  {category}
+                </h3>
                 <div className="category-meta">
-                  <span className="category-count">
+                  <span className="category-count" aria-label={`${categoryItems.length} items in ${category}`}>
                     {categoryItems.length} item{categoryItems.length !== 1 ? 's' : ''}
                   </span>
-                  <span className="category-progress">{categoryProgress}%</span>
+                  <span 
+                    className="category-progress"
+                    aria-label={`${categoryProgress}% of ${category} items completed`}
+                  >
+                    {categoryProgress}%
+                  </span>
                 </div>
               </div>
               
-              <div className="category-items">
+              <div className="category-items" role="list" aria-label={`${category} items`}>
                 {categoryItems.map(item => (
                   <GroceryItemComponent
                     key={item.id}
@@ -129,10 +167,10 @@ export function GroceryList({
                   />
                 ))}
               </div>
-            </div>
+            </section>
           );
         })}
       </div>
-    </div>
+    </section>
   );
-}
+});

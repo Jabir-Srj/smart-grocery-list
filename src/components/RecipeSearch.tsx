@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { Search, Clock, ChefHat } from 'lucide-react';
 import { RecipeSearchResult } from '../types';
 import { recipeService } from '../services/recipeService';
@@ -8,7 +8,7 @@ interface RecipeSearchProps {
   onRecipeSelect: (recipeId: string) => void;
 }
 
-export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
+export const RecipeSearch = memo(function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [recipes, setRecipes] = useState<RecipeSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
     loadRandomRecipes();
   }, []);
 
-  const loadRandomRecipes = async () => {
+  const loadRandomRecipes = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -32,9 +32,9 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!searchQuery.trim()) {
@@ -58,38 +58,56 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery]);
 
-  const resetToRandom = async () => {
+  const resetToRandom = useCallback(async () => {
     setSearchQuery('');
     setHasSearched(false);
     setError(null);
     await loadRandomRecipes();
-  };
+  }, [loadRandomRecipes]);
+
+  const handleRecipeClick = useCallback((recipeId: string) => {
+    onRecipeSelect(recipeId);
+  }, [onRecipeSelect]);
+
+  const handleRecipeKeyDown = useCallback((e: React.KeyboardEvent, recipeId: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onRecipeSelect(recipeId);
+    }
+  }, [onRecipeSelect]);
 
   return (
-    <div className="recipe-search">
+    <div className="recipe-search" role="region" aria-labelledby="recipe-search-heading">
       <div className="recipe-search-header">
-        <h3>
-          <ChefHat size={24} />
+        <h3 id="recipe-search-heading">
+          <ChefHat size={24} aria-hidden="true" />
           Find Recipes
         </h3>
       </div>
 
-      <form onSubmit={handleSearch} className="recipe-search-form">
+      <form onSubmit={handleSearch} className="recipe-search-form" role="search">
+        <label htmlFor="recipe-search-input" className="sr-only">Search for recipes</label>
         <input
+          id="recipe-search-input"
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search for recipes..."
           className="recipe-search-input"
+          aria-describedby="recipe-search-hint"
         />
+        <span id="recipe-search-hint" className="sr-only">
+          Enter a recipe name or ingredient and press search
+        </span>
         <button 
           type="submit" 
           className="recipe-search-button"
           disabled={loading || !searchQuery.trim()}
+          aria-label="Search recipes"
         >
-          <Search size={20} />
+          <Search size={20} aria-hidden="true" />
           Search
         </button>
       </form>
@@ -99,11 +117,13 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
           <button 
             onClick={resetToRandom}
             className="recipe-search-button"
+            type="button"
             style={{ 
               background: 'var(--color-gray-600)',
               fontSize: 'var(--text-sm)',
               padding: 'var(--space-sm) var(--space-md)'
             }}
+            aria-label="Show random recipes instead"
           >
             Show Random Recipes
           </button>
@@ -111,40 +131,48 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
       )}
 
       {loading && (
-        <div className="loading-state">
+        <div className="loading-state" role="status" aria-live="polite">
           <p>Loading recipes...</p>
         </div>
       )}
 
       {error && (
-        <div className="error-state">
+        <div className="error-state" role="alert">
           <p>{error}</p>
         </div>
       )}
 
       {!loading && !error && recipes.length === 0 && hasSearched && (
-        <div className="empty-state">
+        <div className="empty-state" role="status">
           <p>No recipes found. Try a different search term.</p>
         </div>
       )}
 
       {!loading && !error && recipes.length === 0 && !hasSearched && (
-        <div className="loading-state">
+        <div className="loading-state" role="status">
           <p>Loading random recipes...</p>
         </div>
       )}
 
       {recipes.length > 0 && (
-        <div className="recipe-results">
+        <div 
+          className="recipe-results" 
+          role="list" 
+          aria-label={hasSearched ? `Search results for ${searchQuery}` : 'Random recipe suggestions'}
+        >
           {recipes.map((recipe) => (
-            <div
+            <article
               key={recipe.id}
               className="recipe-card"
-              onClick={() => onRecipeSelect(recipe.id)}
+              onClick={() => handleRecipeClick(recipe.id)}
+              onKeyDown={(e) => handleRecipeKeyDown(e, recipe.id)}
+              role="listitem"
+              tabIndex={0}
+              aria-label={`${recipe.title}, ready in ${recipe.readyInMinutes} minutes. Press Enter to view details.`}
             >
               <img
                 src={recipe.image}
-                alt={recipe.title}
+                alt=""
                 className="recipe-card-image"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
@@ -155,15 +183,15 @@ export function RecipeSearch({ onRecipeSelect }: RecipeSearchProps) {
                 <h4 className="recipe-card-title">{recipe.title}</h4>
                 <div className="recipe-card-meta">
                   <span>
-                    <Clock size={16} />
+                    <Clock size={16} aria-hidden="true" />
                     {recipe.readyInMinutes} min
                   </span>
                 </div>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       )}
     </div>
   );
-}
+});

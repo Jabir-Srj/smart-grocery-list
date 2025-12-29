@@ -1,24 +1,47 @@
+/* Grocery Item Component Styles */
+
 .grocery-item {
-  background: white;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-gray-200);
-  transition: all 0.2s;
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  border: 2px solid transparent;
+  transition: all var(--transition-fast);
   margin-bottom: var(--space-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.grocery-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  pointer-events: none;
 }
 
 .grocery-item:hover {
-  border-color: var(--color-gray-300);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.grocery-item:hover::before {
+  opacity: 0.02;
 }
 
 .grocery-item.completed {
   opacity: 0.7;
-  background: var(--color-gray-50);
+  background: var(--color-gray-100);
+}
+
+.grocery-item.completed:hover {
+  opacity: 0.85;
 }
 
 .grocery-item.editing {
   border-color: var(--color-primary);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+  box-shadow: var(--shadow-lg), var(--shadow-glow);
 }
 
 .item-content {
@@ -26,33 +49,43 @@
   align-items: flex-start;
   gap: var(--space-md);
   padding: var(--space-lg);
+  position: relative;
+  z-index: 1;
 }
 
 .completion-button {
   min-width: var(--touch-target-min);
   min-height: var(--touch-target-min);
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  border: 2px solid var(--color-gray-300);
-  background: white;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   flex-shrink: 0;
   margin-top: 2px;
 }
 
 .completion-button:hover {
   border-color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  transform: scale(1.1);
 }
 
 .completion-button.completed {
-  background: var(--color-success);
-  border-color: var(--color-success);
+  background: var(--gradient-primary);
+  border-color: transparent;
   color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.completion-button.completed:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
 }
 
 .item-details {
@@ -69,26 +102,28 @@
 }
 
 .item-name {
-  font-weight: 500;
-  color: var(--color-gray-900);
+  font-weight: 600;
+  color: var(--color-text);
   flex: 1;
   min-width: 0;
   word-break: break-word;
+  font-size: var(--text-base);
 }
 
 .grocery-item.completed .item-name {
   text-decoration: line-through;
-  color: var(--color-gray-500);
+  color: var(--color-text-muted);
 }
 
 .item-quantity {
   font-size: var(--text-sm);
-  color: var(--color-gray-500);
-  background: var(--color-gray-100);
-  padding: 2px var(--space-sm);
-  border-radius: 12px;
+  color: var(--color-primary);
+  background: var(--color-primary-subtle);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-full);
   white-space: nowrap;
   flex-shrink: 0;
+  font-weight: 600;
 }
 
 .item-meta {
@@ -101,80 +136,95 @@
 
 .item-category {
   font-size: var(--text-xs);
-  color: var(--color-gray-400);
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  font-weight: 600;
 }
 
 .item-price {
   font-size: var(--text-sm);
-  color: var(--color-success-hover);
-  font-weight: 500;
+  color: var(--color-success);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .item-notes {
   font-size: var(--text-sm);
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary);
   font-style: italic;
   margin-top: var(--space-xs);
   line-height: 1.4;
+  padding: var(--space-sm);
+  background: var(--color-gray-100);
+  border-radius: var(--radius-md);
 }
 
 .item-actions {
   display: flex;
   gap: var(--space-xs);
   flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+
+.grocery-item:hover .item-actions {
+  opacity: 1;
 }
 
 .action-button {
   min-width: var(--touch-target-min);
   min-height: var(--touch-target-min);
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
   background: transparent;
 }
 
 .action-button.edit {
-  color: var(--color-gray-500);
+  color: var(--color-text-muted);
 }
 
 .action-button.edit:hover {
-  background: var(--color-gray-100);
+  background: var(--color-primary-subtle);
   color: var(--color-primary);
+  transform: scale(1.1);
 }
 
 .action-button.delete {
-  color: var(--color-gray-500);
+  color: var(--color-text-muted);
 }
 
 .action-button.delete:hover {
-  background: #fef2f2;
+  background: var(--color-danger-light);
   color: var(--color-danger);
+  transform: scale(1.1);
 }
 
 .action-button.save {
-  color: var(--color-success-hover);
+  color: var(--color-success);
 }
 
 .action-button.save:hover {
-  background: #ecfdf5;
-  color: #047857;
+  background: var(--color-success-light);
+  color: var(--color-success-hover);
+  transform: scale(1.1);
 }
 
 .action-button.cancel {
-  color: var(--color-gray-500);
+  color: var(--color-text-muted);
 }
 
 .action-button.cancel:hover {
-  background: var(--color-gray-100);
-  color: var(--color-gray-700);
+  background: var(--color-gray-200);
+  color: var(--color-text);
+  transform: scale(1.1);
 }
 
 /* Edit form styles */
@@ -198,16 +248,19 @@
 .edit-select {
   min-height: var(--touch-target-min);
   padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
   font-size: var(--text-sm);
-  transition: border-color 0.2s;
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: all var(--transition-fast);
 }
 
 .edit-input:focus,
 .edit-select:focus {
   outline: none;
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .name-input {
@@ -235,34 +288,34 @@
   min-width: 200px;
 }
 
-/* Small mobile devices (320px - 479px) */
+/* Responsive */
 @media (max-width: 479px) {
   .item-content {
     padding: var(--space-md);
     gap: var(--space-sm);
   }
-  
+
   .item-main {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-xs);
   }
-  
+
   .item-quantity {
     align-self: flex-start;
   }
-  
+
   .item-meta {
     flex-wrap: wrap;
     gap: var(--space-sm);
   }
-  
+
   .edit-row {
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-sm);
   }
-  
+
   .quantity-input,
   .price-input,
   .name-input,
@@ -271,67 +324,71 @@
     width: 100%;
     min-width: auto;
   }
-  
+
   .item-actions {
     gap: var(--space-sm);
+    opacity: 1;
   }
-  
+
   .action-button {
     width: var(--touch-target-min);
     height: var(--touch-target-min);
   }
 }
 
-/* Mobile devices (480px - 767px) */
 @media (min-width: 480px) and (max-width: 767px) {
   .edit-row {
     flex-wrap: wrap;
   }
-  
+
   .name-input {
     min-width: 100%;
     order: -1;
   }
-  
+
   .notes-input {
     min-width: 100%;
   }
 }
 
-/* Touch device optimizations */
+/* Touch optimizations */
 @media (hover: none) and (pointer: coarse) {
   .completion-button {
     min-width: var(--touch-target-min);
     min-height: var(--touch-target-min);
   }
-  
+
   .action-button {
     min-width: var(--touch-target-min);
     min-height: var(--touch-target-min);
   }
-  
+
+  .item-actions {
+    opacity: 1;
+  }
+
   .edit-input,
   .edit-select {
-    font-size: max(16px, var(--text-sm)); /* Prevent zoom on iOS */
+    font-size: max(16px, var(--text-sm));
     min-height: var(--touch-target-min);
   }
 }
 
-/* Landscape orientation on small screens */
+/* Landscape on small screens */
 @media (max-width: 767px) and (orientation: landscape) {
   .item-content {
     padding: var(--space-sm) var(--space-md);
   }
-  
+
   .item-main {
     flex-direction: row;
     align-items: center;
   }
 }
 
-/* High DPI displays */
+/* High DPI */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
   .completion-button {
-    border-width: 1px;
+    border-width: 1.5px;
   }
 }

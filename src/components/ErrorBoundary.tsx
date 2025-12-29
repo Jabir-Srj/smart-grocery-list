@@ -48,9 +48,15 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="error-boundary">
+        <div 
+          className="error-boundary" 
+          role="alert" 
+          aria-live="assertive"
+        >
           <div className="error-content">
-            <AlertTriangle size={48} className="error-icon" />
+            <div className="error-icon" aria-hidden="true">
+              <AlertTriangle size={40} />
+            </div>
             <h2>Something went wrong</h2>
             <p>
               We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.
@@ -59,7 +65,7 @@ export class ErrorBoundary extends Component<Props, State> {
             {import.meta.env.DEV && this.state.error && (
               <details className="error-details">
                 <summary>Error Details (Development)</summary>
-                <pre className="error-stack">
+                <pre>
                   {this.state.error.toString()}
                   {this.state.errorInfo?.componentStack}
                 </pre>
@@ -67,13 +73,20 @@ export class ErrorBoundary extends Component<Props, State> {
             )}
             
             <div className="error-actions">
-              <button onClick={this.handleReset} className="error-button primary">
-                <RefreshCw size={16} />
+              <button 
+                onClick={this.handleReset} 
+                className="btn-primary"
+                type="button"
+                aria-label="Try loading the application again"
+              >
+                <RefreshCw size={16} aria-hidden="true" />
                 Try Again
               </button>
               <button 
                 onClick={() => window.location.reload()} 
-                className="error-button secondary"
+                className="btn-secondary"
+                type="button"
+                aria-label="Refresh the page"
               >
                 Refresh Page
               </button>

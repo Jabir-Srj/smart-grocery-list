@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Plus, ChefHat } from 'lucide-react';
 import { GroceryCategory, Recipe } from '../types';
 import { RecipeSearch } from './RecipeSearch';
@@ -26,7 +26,13 @@ interface AddItemFormProps {
 
 const UNITS = ['pcs', 'lbs', 'oz', 'kg', 'g', 'gallon', 'liter', 'dozen', 'package', 'bag'];
 
-export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, isExpanded, onToggleExpanded }: AddItemFormProps) {
+export const AddItemForm = memo(function AddItemForm({ 
+  onAddItem, 
+  onAddItems, 
+  onShowCookingInstructions, 
+  isExpanded, 
+  onToggleExpanded 
+}: AddItemFormProps) {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [unit, setUnit] = useState('pcs');
@@ -35,7 +41,7 @@ export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, 
   const [activeTab, setActiveTab] = useState<'manual' | 'recipe'>('manual');
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
       onAddItem(
@@ -50,13 +56,13 @@ export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, 
       setPrice('');
       setCategory('');
     }
-  };
+  }, [name, quantity, unit, price, category, onAddItem]);
 
-  const handleRecipeSelect = (recipeId: string) => {
+  const handleRecipeSelect = useCallback((recipeId: string) => {
     setSelectedRecipeId(recipeId);
-  };
+  }, []);
 
-  const handleAddIngredients = (ingredients: Array<{
+  const handleAddIngredients = useCallback((ingredients: Array<{
     name: string;
     quantity: number;
     unit: string;
@@ -69,60 +75,96 @@ export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, 
       price: undefined,
       category: ingredient.category || categorizeItem(ingredient.name)
     })));
-  };
+  }, [onAddItems]);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedRecipeId(null);
+  }, []);
 
   return (
-    <div className="add-item-form">
-      <div className="form-tabs">
+    <div className="add-item-form" role="region" aria-labelledby="add-item-heading">
+      <h2 id="add-item-heading" className="sr-only">Add Items to Your List</h2>
+      
+      <div className="form-tabs" role="tablist" aria-label="Add item methods">
         <button
           type="button"
+          role="tab"
+          id="manual-tab"
+          aria-selected={activeTab === 'manual'}
+          aria-controls="manual-panel"
           onClick={() => setActiveTab('manual')}
           className={`tab-button ${activeTab === 'manual' ? 'active' : ''}`}
         >
-          <Plus size={20} />
+          <Plus size={20} aria-hidden="true" />
           Add Items
         </button>
         <button
           type="button"
+          role="tab"
+          id="recipe-tab"
+          aria-selected={activeTab === 'recipe'}
+          aria-controls="recipe-panel"
           onClick={() => setActiveTab('recipe')}
           className={`tab-button ${activeTab === 'recipe' ? 'active' : ''}`}
         >
-          <ChefHat size={20} />
+          <ChefHat size={20} aria-hidden="true" />
           From Recipe
         </button>
       </div>
 
       {activeTab === 'manual' && (
-        <>
+        <div 
+          id="manual-panel"
+          role="tabpanel"
+          aria-labelledby="manual-tab"
+        >
           <div className="quick-add">
             <form onSubmit={handleSubmit} className="quick-add-form">
+              <label htmlFor="quick-add-input" className="sr-only">Item name</label>
               <input
+                id="quick-add-input"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Add item..."
                 className="quick-input"
+                aria-describedby="quick-add-hint"
               />
-              <button type="submit" className="add-button" disabled={!name.trim()}>
-                <Plus size={20} />
+              <span id="quick-add-hint" className="sr-only">
+                Type an item name and press Enter or click the add button
+              </span>
+              <button 
+                type="submit" 
+                className="add-button" 
+                disabled={!name.trim()}
+                aria-label="Add item to list"
+              >
+                <Plus size={20} aria-hidden="true" />
               </button>
             </form>
             <button
               type="button"
               onClick={onToggleExpanded}
               className={`expand-button ${isExpanded ? 'expanded' : ''}`}
+              aria-expanded={isExpanded}
+              aria-controls="detailed-form"
             >
               {isExpanded ? 'Simple' : 'Detailed'}
             </button>
           </div>
 
           {isExpanded && (
-            <div className="detailed-form">
+            <div 
+              id="detailed-form"
+              className="detailed-form"
+              role="group"
+              aria-label="Detailed item options"
+            >
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="quantity">Quantity</label>
+                  <label htmlFor="quantity-input">Quantity</label>
                   <input
-                    id="quantity"
+                    id="quantity-input"
                     type="number"
                     min="0.1"
                     step="0.1"
@@ -132,9 +174,9 @@ export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, 
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="unit">Unit</label>
+                  <label htmlFor="unit-select">Unit</label>
                   <select
-                    id="unit"
+                    id="unit-select"
                     value={unit}
                     onChange={(e) => setUnit(e.target.value)}
                     className="form-select"
@@ -148,9 +190,9 @@ export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, 
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="price">Price ($)</label>
+                  <label htmlFor="price-input">Price ($)</label>
                   <input
-                    id="price"
+                    id="price-input"
                     type="number"
                     min="0"
                     step="0.01"
@@ -161,9 +203,9 @@ export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, 
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="category">Category</label>
+                  <label htmlFor="category-select">Category</label>
                   <select
-                    id="category"
+                    id="category-select"
                     value={category}
                     onChange={(e) => setCategory(e.target.value as GroceryCategory)}
                     className="form-select"
@@ -177,21 +219,27 @@ export function AddItemForm({ onAddItem, onAddItems, onShowCookingInstructions, 
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {activeTab === 'recipe' && (
-        <RecipeSearch onRecipeSelect={handleRecipeSelect} />
+        <div
+          id="recipe-panel"
+          role="tabpanel"
+          aria-labelledby="recipe-tab"
+        >
+          <RecipeSearch onRecipeSelect={handleRecipeSelect} />
+        </div>
       )}
 
       {selectedRecipeId && (
         <RecipeModal
           recipeId={selectedRecipeId}
-          onClose={() => setSelectedRecipeId(null)}
+          onClose={handleCloseModal}
           onAddIngredients={handleAddIngredients}
           onShowCookingInstructions={onShowCookingInstructions}
         />
       )}
     </div>
   );
-}
+});

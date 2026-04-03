@@ -162,12 +162,13 @@
 .header-button {
   min-width: var(--touch-target-min);
   min-height: var(--touch-target-min);
-  width: var(--touch-target-comfortable);
-  height: var(--touch-target-comfortable);
-  border: none;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: var(--color-gray-100);
-  color: var(--color-text-secondary);
+  background: linear-gradient(135deg, var(--color-gray-50) 0%, var(--color-gray-100) 100%);
+  color: var(--color-text);
+  font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -175,6 +176,7 @@
   transition: all var(--transition-fast);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .header-button::before {
@@ -187,37 +189,51 @@
 }
 
 .header-button:hover {
-  background: var(--color-gray-200);
-  color: var(--color-text);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
 }
 
 .header-button:hover::before {
-  opacity: 0.1;
+  opacity: 0.2;
 }
 
 .header-button:active {
   transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .cooking-button {
-  background: var(--color-secondary-light) !important;
+  background: linear-gradient(135deg, var(--color-secondary-light) 0%, rgba(249, 115, 22, 0.15) 100%) !important;
   color: var(--color-secondary) !important;
+  border-color: var(--color-secondary-light) !important;
 }
 
 .cooking-button:hover {
-  background: rgba(249, 115, 22, 0.2) !important;
-  color: var(--color-secondary-hover) !important;
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-hover) 100%) !important;
+  color: white !important;
+  border-color: var(--color-secondary-hover) !important;
+  transform: translateY(-2px);
 }
 
 .theme-toggle {
-  background: var(--color-primary-subtle) !important;
+  background: linear-gradient(135deg, var(--color-primary-subtle) 0%, var(--color-primary-light) 100%) !important;
   color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 
 .theme-toggle:hover {
-  background: var(--color-primary-light) !important;
-  color: var(--color-primary-hover) !important;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%) !important;
+  color: white !important;
+  border-color: var(--color-primary-hover) !important;
+  transform: translateY(-2px);
 }
 
 .stats-badge {
@@ -396,6 +412,41 @@
   margin-bottom: 0;
   font-size: var(--text-xs);
   color: var(--color-text-muted);
+}
+
+
+/* Phase 3 Feature Styles */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap-reverse;
+}
+
+.header-button.template-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md) var(--space-md);
+  background: var(--color-gray-100);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.header-button.template-button:hover {
+  background: var(--color-primary-subtle);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.header-button.template-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Responsive Design */

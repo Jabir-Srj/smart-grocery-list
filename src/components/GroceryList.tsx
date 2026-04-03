@@ -1,8 +1,11 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState, useCallback } from 'react';
 import { ShoppingBag, Trash2, CheckCircle } from 'lucide-react';
 import { GroceryItem } from '../types';
 import { GroceryItemComponent } from './GroceryItemComponent';
+import { ExportButtons } from './ExportButtons';
+import { SearchBar } from './SearchBar';
 import { groupItemsByCategory, getCompletionPercentage, formatCurrency, calculateTotalCost } from '../utils/groceryUtils';
+import { useDragAndDrop } from '../hooks/useFeatures';
 import './GroceryList.css';
 
 interface GroceryListProps {
@@ -12,7 +15,9 @@ interface GroceryListProps {
   onRemoveItem: (id: string) => void;
   onClearCompleted: () => void;
   onClearAll: () => void;
+  onReorderItems?: (items: GroceryItem[]) => void;
   budget?: number;
+  shoppingList?: any;
 }
 
 export const GroceryList = memo(function GroceryList({
@@ -22,7 +27,9 @@ export const GroceryList = memo(function GroceryList({
   onRemoveItem,
   onClearCompleted,
   onClearAll,
-  budget
+  onReorderItems,
+  budget,
+  shoppingList
 }: GroceryListProps) {
   // Memoize computed values
   const groupedItems = useMemo(() => groupItemsByCategory(items), [items]);
@@ -30,6 +37,43 @@ export const GroceryList = memo(function GroceryList({
   const totalCost = useMemo(() => calculateTotalCost(items), [items]);
   const completedItems = useMemo(() => items.filter(item => item.isCompleted), [items]);
   const isOverBudget = budget && totalCost > budget;
+
+  // Search state
+  const [searchResults, setSearchResults] = useState<GroceryItem[]>(items);
+
+  // Drag and drop
+  const { draggedId, handlers } = useDragAndDrop(items, (reordered) => {
+    if (onReorderItems) onReorderItems(reordered);
+  });
+
+  const handleDragStart = useCallback((e: React.DragEvent, id: string) => {
+    e.dataTransfer.effectAllowed = 'move';
+    handlers.handleDragStart(id);
+  }, [handlers]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    handlers.handleDragOver(e);
+  }, [handlers]);
+
+  const handleDrop = useCallback((e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    handlers.handleDrop(id);
+  }, [handlers]);
+
+  const handleDragEnd = useCallback(() => {
+    handlers.handleDragEnd();
+  }, [handlers]);
+
+  // Determine which items to display (search results or all items)
+  const displayedItems = searchResults;
+
+  // Group displayed items by category
+  const groupedDisplayedItems = useMemo(
+    () => groupItemsByCategory(displayedItems),
+    [displayedItems]
+  );
 
   if (items.length === 0) {
     return (
@@ -87,29 +131,40 @@ export const GroceryList = memo(function GroceryList({
         </div>
 
         {/* Action Buttons */}
-        <div className="list-actions" role="group" aria-label="List actions">
-          {completedItems.length > 0 && (
+        <div className="list-controls" role="group" aria-label="List controls">
+          <div className="list-actions-left">
+            {completedItems.length > 0 && (
+              <button 
+                onClick={onClearCompleted} 
+                className="action-btn clear-completed"
+                aria-label={`Clear ${completedItems.length} completed items`}
+                type="button"
+              >
+                <CheckCircle size={16} aria-hidden="true" />
+                Clear Completed ({completedItems.length})
+              </button>
+            )}
             <button 
-              onClick={onClearCompleted} 
-              className="action-btn clear-completed"
-              aria-label={`Clear ${completedItems.length} completed items`}
+              onClick={onClearAll} 
+              className="action-btn clear-all"
+              aria-label="Clear all items from list"
               type="button"
             >
-              <CheckCircle size={16} aria-hidden="true" />
-              Clear Completed ({completedItems.length})
+              <Trash2 size={16} aria-hidden="true" />
+              Clear All
             </button>
+          </div>
+
+          {shoppingList && (
+            <div className="list-actions-right">
+              <ExportButtons shoppingList={shoppingList} />
+            </div>
           )}
-          <button 
-            onClick={onClearAll} 
-            className="action-btn clear-all"
-            aria-label="Clear all items from list"
-            type="button"
-          >
-            <Trash2 size={16} aria-hidden="true" />
-            Clear All
-          </button>
         </div>
       </div>
+
+      {/* Search Bar */}
+      <SearchBar items={items} onSearchResults={setSearchResults} />
 
       {/* Budget Warning */}
       {isOverBudget && (
@@ -122,9 +177,16 @@ export const GroceryList = memo(function GroceryList({
         </div>
       )}
 
+      {/* No search results message */}
+      {searchResults.length === 0 && items.length > 0 && (
+        <div className="no-search-results" role="status" aria-live="polite">
+          <p>No items match your search.</p>
+        </div>
+      )}
+
       {/* Categorized Items */}
       <div className="categorized-items">
-        {Object.entries(groupedItems).map(([category, categoryItems]) => {
+        {Object.entries(groupedDisplayedItems).map(([category, categoryItems]) => {
           if (categoryItems.length === 0) return null;
           
           const completedInCategory = categoryItems.filter(item => item.isCompleted).length;
@@ -164,6 +226,12 @@ export const GroceryList = memo(function GroceryList({
                     onToggleCompletion={onToggleCompletion}
                     onUpdateItem={onUpdateItem}
                     onRemoveItem={onRemoveItem}
+                    isDragging={draggedId === item.id}
+                    isDragOver={false}
+                    onDragStart={handleDragStart}
+                    onDragOver={handleDragOver}
+                    onDrop={handleDrop}
+                    onDragEnd={handleDragEnd}
                   />
                 ))}
               </div>

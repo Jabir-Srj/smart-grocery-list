@@ -1,0 +1,199 @@
+/* Card Component - Modern Redesign */
+
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--color-primary-light);
+}
+
+.card.interactive {
+  cursor: pointer;
+}
+
+.card.interactive:hover {
+  background-color: var(--color-surface-elevated);
+}
+
+/* Card Layout Sections */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-header h3,
+.card-header h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-lg);
+}
+
+.card-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.card-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-sm);
+}
+
+.card-content {
+  margin: var(--space-lg) 0;
+}
+
+.card-footer {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+  margin-top: var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.card-footer .btn {
+  flex: 1;
+  min-width: 150px;
+}
+
+/* Variants */
+.card-elevated {
+  box-shadow: var(--shadow-lg);
+}
+
+.card-elevated:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+.card-outlined {
+  background-color: transparent;
+  border: 2px solid var(--color-border);
+}
+
+.card-outlined:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+.card-flat {
+  box-shadow: none;
+  border: none;
+  background-color: var(--color-gray-50);
+}
+
+[data-theme="dark"] .card-flat {
+  background-color: var(--color-gray-100);
+}
+
+/* Sizes */
+.card-sm {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.card-lg {
+  padding: var(--space-xl);
+  border-radius: var(--radius-xl);
+}
+
+/* Color Variants */
+.card-primary {
+  border: 2px solid var(--color-primary-light);
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-primary-subtle) 100%);
+}
+
+.card-success {
+  border: 2px solid var(--color-success-light);
+  background-color: var(--color-surface);
+}
+
+.card-warning {
+  border: 2px solid var(--color-warning-light);
+  background-color: var(--color-surface);
+}
+
+.card-danger {
+  border: 2px solid var(--color-danger-light);
+  background-color: var(--color-surface);
+}
+
+/* Image Container */
+.card-image {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-base);
+}
+
+.card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+/* Badge in card */
+.card .badge {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+}
+
+/* List in card */
+.card ul,
+.card ol {
+  margin: var(--space-md) 0;
+  padding-left: var(--space-lg);
+}
+
+.card li {
+  margin-bottom: var(--space-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Compact card for lists */
+.card-compact {
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.card-compact .card-header {
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+}
+
+.card-compact .card-footer {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+}

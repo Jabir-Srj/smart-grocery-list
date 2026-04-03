@@ -1,0 +1,83 @@
+/* Undo/Redo Buttons Component Styles */
+
+.undo-redo-buttons {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.undo-redo-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.undo-redo-btn:hover:not(:disabled) {
+  background: var(--color-gray-200);
+  color: var(--color-text);
+  border-color: var(--color-primary-subtle);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.undo-redo-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.undo-redo-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.undo-redo-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.undo-btn {
+  /* Undo styling */
+}
+
+.redo-btn {
+  /* Redo styling */
+}
+
+/* SR-only class for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .undo-redo-buttons {
+    gap: var(--space-xs);
+  }
+
+  .undo-redo-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .undo-redo-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+}

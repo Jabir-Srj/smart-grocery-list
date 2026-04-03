@@ -351,3 +351,75 @@
     gap: var(--space-xl);
   }
 }
+
+/* List Controls Layout - Phase 3 Enhancement */
+.list-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-lg);
+}
+
+.list-actions-left {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.list-actions-right {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+/* Search Bar Container */
+.grocery-list .search-bar-container {
+  margin-bottom: var(--space-lg);
+}
+
+/* No Search Results Message */
+.no-search-results {
+  text-align: center;
+  padding: var(--space-2xl) var(--space-lg);
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-lg);
+  background: var(--color-gray-100);
+  animation: fadeIn 150ms ease-out;
+}
+
+.no-search-results p {
+  margin: 0;
+  font-size: var(--text-base);
+}
+
+/* Responsive Controls Layout */
+@media (max-width: 768px) {
+  .list-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .list-actions-left,
+  .list-actions-right {
+    width: 100%;
+  }
+
+  .list-actions-left {
+    justify-content: center;
+  }
+
+  .list-actions-right {
+    justify-content: center;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

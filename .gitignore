@@ -56,3 +56,6 @@ logs/
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# Improvement notes and analysis (tracked separately)
+.improvements/

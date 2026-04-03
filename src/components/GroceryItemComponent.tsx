@@ -9,6 +9,12 @@ interface GroceryItemProps {
   onToggleCompletion: (id: string) => void;
   onUpdateItem: (id: string, updates: Partial<GroceryItem>) => void;
   onRemoveItem: (id: string) => void;
+  isDragging?: boolean;
+  isDragOver?: boolean;
+  onDragStart?: (e: React.DragEvent, id: string) => void;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDrop?: (e: React.DragEvent, id: string) => void;
+  onDragEnd?: (e: React.DragEvent) => void;
 }
 
 const UNITS = ['pcs', 'lbs', 'oz', 'kg', 'g', 'gallon', 'liter', 'dozen', 'package', 'bag'];
@@ -17,7 +23,13 @@ export const GroceryItemComponent = memo(function GroceryItemComponent({
   item, 
   onToggleCompletion, 
   onUpdateItem, 
-  onRemoveItem 
+  onRemoveItem,
+  isDragging = false,
+  isDragOver = false,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd
 }: GroceryItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -74,6 +86,22 @@ export const GroceryItemComponent = memo(function GroceryItemComponent({
     setIsEditing(true);
   }, []);
 
+  const handleDragStartLocal = useCallback((e: React.DragEvent) => {
+    if (onDragStart) onDragStart(e, item.id);
+  }, [item.id, onDragStart]);
+
+  const handleDragOverLocal = useCallback((e: React.DragEvent) => {
+    if (onDragOver) onDragOver(e);
+  }, [onDragOver]);
+
+  const handleDropLocal = useCallback((e: React.DragEvent) => {
+    if (onDrop) onDrop(e, item.id);
+  }, [item.id, onDrop]);
+
+  const handleDragEndLocal = useCallback((e: React.DragEvent) => {
+    if (onDragEnd) onDragEnd(e);
+  }, [onDragEnd]);
+
   const totalPrice = item.price ? item.price * item.quantity : 0;
 
   if (isEditing) {
@@ -82,6 +110,7 @@ export const GroceryItemComponent = memo(function GroceryItemComponent({
         className="grocery-item editing"
         role="form"
         aria-label={`Edit ${item.name}`}
+        draggable={false}
       >
         <div className="item-content">
           <div className="edit-form">
@@ -194,10 +223,19 @@ export const GroceryItemComponent = memo(function GroceryItemComponent({
 
   return (
     <div 
-      className={`grocery-item ${item.isCompleted ? 'completed' : ''}`}
+      className={`grocery-item ${item.isCompleted ? 'completed' : ''} ${isDragging ? 'dragging' : ''} ${isDragOver ? 'drag-over' : ''}`}
       role="listitem"
       aria-label={`${item.name}, ${item.quantity} ${item.unit}${item.isCompleted ? ', completed' : ''}`}
+      draggable
+      onDragStart={handleDragStartLocal}
+      onDragOver={handleDragOverLocal}
+      onDrop={handleDropLocal}
+      onDragEnd={handleDragEndLocal}
     >
+      {(isDragging || isDragOver) && (
+        <div className="drag-indicator" aria-hidden="true" />
+      )}
+      
       <div className="item-content">
         <button
           onClick={handleToggle}
